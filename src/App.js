@@ -1,25 +1,40 @@
-import logo from './logo.svg';
+import React, {useState} from 'react';
+import Sidebar from './Components/Sidebar/Sidebar';
+import TeamBuilder from './Pages/TeamBuilder';
+import Session from './Pages/Session';
+import Gallery from './Pages/Gallery';
 import './App.css';
+import {DataProvider} from './Contexts/DataContext'; // 引入 DataProvider
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+
+const App = () => {
+    const [activePage, setActivePage] = useState('Session');
+
+    const handleItemClick = (page) => {
+        setActivePage(page);
+    };
+
+    const renderPage = () => {
+        switch (activePage) {
+            case 'TeamBuilder':
+                return <TeamBuilder/>;
+            case 'Session':
+                return <Session/>;
+            case 'Gallery':
+                return <Gallery/>;
+            default:
+                return <div>Home Content</div>;
+        }
+    };
+
+    return (
+        <DataProvider>
+            <div className="app">
+                <Sidebar activePage={activePage} onItemClick={handleItemClick}/>
+                <div className="content">{renderPage()}</div>
+            </div>
+        </DataProvider>
+    );
+};
 
 export default App;

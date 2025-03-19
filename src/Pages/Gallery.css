@@ -1,0 +1,214 @@
+/* Gallery.css */
+
+.gallery {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* 头部导航样式 */
+.header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center; /* 垂直居中 */
+  padding: 10px 20px; /* 增加左右内边距 */
+  background-color: white; /* 背景为白色 */
+  border-bottom: 1px solid #f0f0f0; /* 底部边框 */
+}
+
+.header button {
+  margin-right: 20px; /* 按钮之间的间距 */
+  padding: 10px 20px; /* 调整内边距 */
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  color: grey; /* 未选中时字体为灰色 */
+  font-weight: normal; /* 未选中时字体不加粗 */
+  border-bottom: 2px solid transparent; /* 默认无下框线 */
+  transition: color 0.3s, border-bottom 0.3s, font-weight 0.3s; /* 添加过渡效果 */
+  white-space: nowrap; /* 防止按钮文字换行 */
+  width: 115px;
+  text-align: center;
+}
+
+.header button:last-child {
+  margin-right: 0; /* 最后一个按钮不需要右边距 */
+}
+
+.header button.active {
+  color: #007bff; /* 选中时字体为蓝色 */
+  font-weight: bold; /* 选中时字体加粗 */
+  border-bottom: 2px solid #007bff; /* 选中时显示蓝色下框线 */
+}
+
+
+.content {
+  flex-grow: 1;
+  padding: 20px;
+  position: relative; /* 为 Add item 按钮定位 */
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.add-item {
+  position: absolute; /* 绝对定位 */
+  top: 20px; /* 距离顶部 */
+  right: 20px; /* 距离右侧 */
+}
+
+.add-item button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 120px; /* 设置按钮宽度 */
+  text-align: center; /* 文字居中 */
+}
+
+/* item 数量显示 */
+.item-count {
+  position: absolute; /* 绝对定位 */
+  top: 20px; /* 距离顶部 */
+  left: 20px; /* 距离左侧 */
+  font-size: 16px;
+  color: #333;
+}
+
+/* item 列表容器 */
+.item-list-container {
+  margin-top: 60px; /* 为 item 数量显示和按钮留出空间 */
+  height: calc(100vh - 160px); /* 设置固定高度，确保内容超出时显示滚动条 */
+  overflow: auto; /* 垂直方向显示滚动条 */
+  /*border: 1px solid #ccc; !* 可选：添加边框以便查看效果 *!*/
+  /*margin-right: 10px;*/
+}
+
+.item-list {
+  display: flex;
+  flex-wrap: wrap; /* 允许换行 */
+  gap: 10px;
+  width: 100%;
+}
+
+/* item 卡片样式 */
+.item-card {
+  position: relative;
+  width: 220px; /* 设置卡片宽度 */
+  height: 200px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9; /* 卡片背景为灰色 */
+  transition: background-color 0.3s;
+}
+
+.item-info h3 {
+  margin: 25px 0 0;
+  font-size: 18px;
+  white-space: nowrap; /* 不换行 */
+  overflow: hidden; /* 超出部分隐藏 */
+  text-overflow: ellipsis; /* 超出部分显示省略号 */
+}
+
+.item-info p {
+  margin: 20px 0 0;
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis; /* 超出部分显示省略号 */
+}
+
+/* 操作按钮 */
+.item-actions {
+  position: absolute;
+  top: 2px;
+  right: 5px;
+  display: none; /* 默认隐藏 */
+}
+
+.item-card:hover .item-actions {
+  display: flex; /* 鼠标悬停时显示 */
+  gap: 5px;
+}
+
+.item-actions button {
+  padding: 8px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.item-actions button:hover {
+  background-color: rgba(0, 0, 0, 0.1); /* 鼠标悬停时按钮背景加深 */
+}
+
+/*左边靠近右边*/
+.item-actions button:first-child {
+  margin-right: -10px; /* 根据需要调整负值 */
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+}
+
+.modal h2 {
+  margin-top: 0;
+}
+
+.modal label {
+  display: block;
+  margin-bottom: 10px;
+  margin-right: 15px;
+}
+
+.modal input,
+.modal textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-actions button[type='button'] {
+  background-color: #6c757d;
+  color: white;
+}
+
+.modal-actions button[type='submit'] {
+  background-color: #007bff;
+  color: white;
+}

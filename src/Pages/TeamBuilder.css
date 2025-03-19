@@ -1,0 +1,403 @@
+/* TeamBuilder 容器 */
+.team-builder {
+  display: flex;
+  height: 100vh;
+  margin-top: -20px;
+  margin-left: -10px;
+  position: relative;
+}
+
+/* TeamBuilder 边栏 */
+.team-sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: white;
+  /*border: 1px solid #ccc;*/
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* 右侧阴影 */
+  padding: 10px;
+  transition: width 0.3s ease;
+  z-index:1
+}
+
+.team-sidebar.collapsed {
+  width: 50px;
+}
+
+/* TeamBuilder 边栏按钮 */
+.team-toggle-button {
+  padding: 10px;
+  margin-bottom: 10px;
+  width: calc(100% - 20px);
+  cursor: pointer;
+  border: 1px solid #ccc;
+}
+
+/* 新建团队按钮容器 */
+.new-team-container {
+  position: relative; /* 为提示框定位 */
+}
+
+.team-new-team-button {
+  width: calc(100% - 20px);
+  padding: 10px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  text-align: center; /* 文字居中 */
+}
+
+.team-new-team-button:hover {
+  background-color: #f5f5f5; /* 鼠标悬停时背景为浅灰色 */
+}
+
+/* 提示框 */
+.new-team-tooltip {
+  display: none; /* 默认隐藏 */
+  position: absolute;
+  left: 100%; /* 提示框显示在按钮右侧 */
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 10px; /* 与按钮的间距 */
+  padding: 5px 10px;
+  background-color: black; /* 背景为黑色 */
+  color: white; /* 字体为白色 */
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 1000; /* 确保提示框在最上层 */
+}
+
+/* 边栏收缩时，鼠标悬停显示提示框 */
+.team-sidebar.collapsed .new-team-container:hover .new-team-tooltip {
+  display: block;
+}
+
+/*团队列表容器*/
+.team-list-container{
+  flex: 1;  /*占据剩余空间*/
+  overflow: auto;
+  margin-top: 10px; /*与上面的按钮保持一点间距*/
+  max-height: calc(100vh - 150px); /*设置最大高度，确保内容可以滚动*/
+  background-color: white; /* white背景 */
+  border-radius: 4px; /* 圆角 */
+  padding: 10px; /* 内边距 */
+}
+
+/* 团队列表 */
+.team-list-container ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* 团队项 */
+.team-item {
+  position: relative;
+  padding: 10px;
+  margin-bottom: 5px;
+  background-color: #e0e0e0; /* 默认背景色 */
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.team-item:hover {
+  background-color: #d0d0d0; /* 鼠标悬停时背景色 */
+}
+
+.team-item.selected {
+  background-color: #a0a0a0; /* 选中时背景色加深 */
+}
+
+.team-action{
+  position: absolute;
+  top: -1px;
+  right: -3px;
+  display: none; /* 默认隐藏 */
+}
+
+.team-item:hover .team-action {
+  display: flex; /* 鼠标悬停时显示 */
+  gap: 5px;
+}
+
+/* 删除按钮 */
+.team-action button {
+  padding: 8px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.team-action button:hover {
+  background-color: rgba(0, 0, 0, 0.1); /* 鼠标悬停时按钮背景加深 */
+}
+
+
+/* 主内容区域 */
+.team-main-content {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #fff;
+  display: flex;
+  align-items: flex-start; /* 顶部对齐 */
+  gap: 20px; /* 卡片之间的间距 */
+}
+
+/* 未选择团队时的提示 */
+.no-team-selected {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  font-size: 30px;
+  color: #888;
+}
+
+/* 团队卡片 */
+.team-card {
+  width: 50%; /* 占据主内容宽度的 50% */
+  height: 90vh;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative; /* 为 Save 按钮定位 */
+}
+
+/* Agent 卡片 */
+.agent-card {
+  width: 50%; /* 占据主内容宽度的 50% */
+  height: 90vh;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 团队名称输入框 */
+.team-name-input {
+  font-size: 24px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: calc(100% - 20px);
+  max-width: 100%;
+  margin-bottom: 20px;
+}
+
+/* Agent 标签 */
+.agent-label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* 已有的 Agents */
+.existing-agents {
+  max-height: 550px; /* 设置最大高度 */
+  overflow-y: auto; /* 超出时显示滚动条 */
+  margin-bottom: 20px;
+}
+
+.agent-item {
+  padding: 8px 12px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  cursor: pointer;
+  height: 22px;
+  position: relative;
+}
+
+.agent-item.selected {
+  background-color: #a0a0a0; /* 选中时背景色加深 */
+}
+
+.remove-action{
+  position: absolute;
+  top: -2px;
+  right: 2px;
+  display: none; /* 默认隐藏 */
+}
+
+.selected-model:hover .remove-action,
+.tool-item:hover .remove-action,
+.agent-item:hover .remove-action{
+  display: flex;/*鼠标悬停时出现*/
+  /*background-color: rgba(0, 0, 0, 0.1); !* 鼠标悬停时按钮背景加深 *!*/
+}
+
+.remove-action button {
+  padding: 8px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.remove-action button:hover {
+  background-color: rgba(0, 0, 0, 0.1); /* 鼠标悬停时按钮背景加深 */
+}
+
+/* 添加 Agent 的虚线框 */
+.add-agent-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.add-agent-box:hover {
+  border-color: #888;
+}
+
+/* Save 按钮 */
+.save-button {
+  position: absolute;
+  bottom: 10px;
+  right: 0;
+  padding: 10px 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.save-button:hover {
+  background-color: #0056b3;
+}
+
+/* 已有的 Tools */
+.existing-tools {
+  max-height: 570px; /* 设置最大高度 */
+  overflow-y: auto; /* 超出时显示滚动条 */
+  margin-bottom: 20px;
+}
+
+.tool-item {
+  padding: 8px 12px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  height: 22px;
+  position: relative;
+}
+
+
+/* 添加 Tool 的虚线框 */
+.add-tool-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.3s;
+  margin-bottom: 5px;
+}
+
+.add-tool-box:hover {
+  border-color: #888;
+}
+
+/* 已选的 Model */
+.selected-model {
+  padding: 8px 12px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 20px;
+  position: relative;
+  height: 21px;
+  align-items: center;
+  display: flex;
+}
+
+/* 添加 Model 的虚线框 */
+.add-model-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.add-model-box:hover {
+  border-color: #888;
+}
+
+/* 弹窗 */
+.agent-modal,
+.tool-modal,
+.model-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.agent-modal-content,
+.tool-modal-content,
+.model-modal-content  {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.agent-modal-content ul,
+.tool-modal-content ul,
+.model-modal-content ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.agent-modal-content li,
+.tool-modal-content li,
+.model-modal-content li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.agent-modal-content li:hover,
+.tool-modal-content li:hover,
+.model-modal-content li:hover {
+  background-color: #f0f0f0;
+}
+

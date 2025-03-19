@@ -1,0 +1,97 @@
+/* Sidebar.css */
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: white; /* 背景为白色 */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
+  transition: width 0.3s;
+  padding: 10px; /* 边栏内边距 */
+}
+
+.sidebar.collapsed {
+  width: 60px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px; /* 调整内边距 */
+  margin: 5px 10px; /* 每个选项之间的间距 */
+  cursor: pointer;
+  color: grey; /* 选项字体为灰色 */
+  transition: background-color 0.3s, color 0.3s;
+  border-radius: 8px; /* 圆角效果 */
+  width: calc(100% - 40px); /* 宽度略小于边栏 */
+  position: relative; /* 为提示框定位 */
+}
+
+.sidebar.collapsed .sidebar-item {
+  justify-content: center; /* 收缩状态下图标居中 */
+  padding: 10px; /* 调整内边距 */
+}
+
+.sidebar-item:hover {
+  background-color: #f5f5f5; /* 鼠标悬停时背景为浅灰色 */
+}
+
+.sidebar-item.active {
+  background-color: #e0e0e0; /* 选中选项背景为灰色 */
+  color: black; /* 选中选项字体颜色加深 */
+}
+
+.icon {
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+.sidebar.collapsed .icon {
+  margin-right: 0; /* 收缩状态下移除图标右边距 */
+}
+
+.text {
+  white-space: nowrap;
+}
+
+.sidebar.collapsed .text {
+  display: none; /* 收缩状态下隐藏文本 */
+}
+
+/* 自定义提示框样式 */
+.tooltip {
+  display: none; /* 默认隐藏 */
+  position: absolute;
+  left: 100%; /* 提示框显示在图标右侧 */
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 10px; /* 与图标的间距 */
+  padding: 5px 10px;
+  background-color: black; /* 背景为黑色 */
+  color: white; /* 字体为白色 */
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 1000; /* 确保提示框在最上层 */
+}
+
+.sidebar.collapsed .sidebar-item:hover .tooltip {
+  display: block; /* 鼠标悬停时显示提示框 */
+}
+
+button {
+  background-color: white;
+  color: grey;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  width: calc(100% - 20px); /* 按钮宽度略小于边栏 */
+  text-align: left;
+  margin: 5px 10px; /* 按钮与其他选项的间距 */
+  border-radius: 8px; /* 圆角效果 */
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar.collapsed button {
+  text-align: center; /* 收缩状态下按钮文字居中 */
+  padding: 10px; /* 调整内边距 */
+}
+
