@@ -1,91 +1,186 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-
+// 样式定义
 const InputContainer = styled.div`
-  width: 100%;
-  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  padding: 8px;
+  width: calc(100% - 20px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const InputWrapper = styled.div`
   display: flex;
-  justify-content: flex-start;
   align-items: center;
-  position: sticky;
-  bottom: 0;
-  background: #fff;
-  box-sizing: border-box;
-  border-top: 1px solid #ddd;
+  gap: 8px;
 `;
 
 const InputField = styled.input`
   flex: 1;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  padding: 4px 8px;
+  background: transparent;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`;
+
+const UploadButton = styled.div`
+  cursor: pointer;
+  padding: 4px;
   font-size: 20px;
-  width: 500px;
+  color: #666;
+  &:hover {
+    color: #000;
+  }
 `;
 
 const VoiceButton = styled.button`
-  width: 100px;
-  background: #007bff;
-  color: #fff;
   border: none;
-  border-radius: 4px;
-  padding: 10px 10px;
-  font-size: 16px;
+  background: none;
   cursor: pointer;
-  margin-left: 10px;
-  transition: background 0.2s ease-in-out;
-  
+  padding: 4px;
+  font-size: 20px;
+  color: #666;
   &:hover {
-    background: #0056b3;
+    color: #000;
   }
 `;
 
 const SendButton = styled.button`
-  background: #007bff;
-  color: #fff;
   border: none;
-  border-radius: 4px;
-  padding: 10px 17px;
-  font-size: 16px;
+  background: #000;
+  color: #fff;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  margin-left: 10px;
-  transition: background 0.2s ease-in-out;
-  width: 70px;
-
+  font-size: 16px;
   &:hover {
-    background: #0056b3;
+    background: #333;
   }
 `;
 
+const FilePreview = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  width: fit-content; /* 让容器宽度适应内容 */
+  max-width: 200px; /* 限制最大宽度，防止过长 */
+`;
+
+const FileIcon = styled.span`
+  margin-right: 4px;
+  font-size: 16px;
+`;
+
+const FileName = styled.span`
+  display: inline-block;
+  width: 2500px; /* 固定宽度 */
+  overflow: hidden;
+  text-overflow: ellipsis; /* 超出部分显示省略号 */
+  white-space: nowrap; /* 防止换行 */
+  font-size: 14px;
+  color: #333;
+`;
+
+const RemoveButton = styled.button`
+  border: none;
+  margin-right: 0px;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0 4px;
+  color: #666;
+  &:hover {
+    color: #ff0000;
+  }
+`;
+
+const PreviewContainer = styled.div`
+  margin-top: 8px;
+  padding: 8px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+`;
+
+const PreviewText = styled.div`
+  margin-bottom: 8px;
+  font-size: 14px;
+`;
+
+const PreviewButtonGroup = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
+const ConfirmButton = styled.button`
+  border: none;
+  background: #000;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover {
+    background: #333;
+  }
+`;
+
+const CancelButton = styled.button`
+  border: 1px solid #e0e0e0;
+  background: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover {
+    background: #f0f0f0;
+  }
+`;
 
 // 输入框组件
 const InputBox = ({ value, onChange, onSend }) => {
   const [isListening, setIsListening] = useState(false);
+  const [previewText, setPreviewText] = useState('');
+  const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState(null);
 
   const handleVoiceInput = () => {
     if (!('webkitSpeechRecognition' in window)) {
-      alert('Your browser does not support speech recognition.');
+      alert('你的浏览器不支持语音识别功能。');
       return;
     }
 
     const recognition = new window.webkitSpeechRecognition();
-    recognition.lang = 'en-US'; // 设置语言
-    recognition.interimResults = false; // 是否返回临时结果
-    recognition.maxAlternatives = 1; // 返回的最大结果数量
+    recognition.lang = 'zh-CN';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
 
-    recognition.start(); // 开始语音识别
+    recognition.start();
     setIsListening(true);
 
     recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript; // 获取识别结果
-      onChange({ target: { value: transcript } }); // 更新输入框内容
-      recognition.stop(); // 停止识别
+      const transcript = event.results[0][0].transcript;
+      setPreviewText(transcript);
+      setIsPreviewVisible(true);
+      recognition.stop();
       setIsListening(false);
     };
 
     recognition.onerror = (event) => {
-      console.error('Speech recognition error:', event.error);
+      console.error('语音识别错误:', event.error);
       recognition.stop();
       setIsListening(false);
     };
@@ -95,20 +190,73 @@ const InputBox = ({ value, onChange, onSend }) => {
     };
   };
 
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setUploadedFile({
+        name: file.name,
+        file: file,
+      });
+    }
+  };
+
+  const handleFileRemove = () => {
+    setUploadedFile(null);
+  };
+
+  const handleConfirm = () => {
+    onChange({ target: { value: previewText } });
+    setIsPreviewVisible(false);
+    setPreviewText('');
+  };
+
+  const handleCancel = () => {
+    setIsPreviewVisible(false);
+    setPreviewText('');
+  };
+
   return (
     <InputContainer>
-      <InputField
-        type="text"
-        value={value}
-        onChange={onChange}
-        placeholder="Type a message..."
-      />
-      <VoiceButton onClick={handleVoiceInput}>
-        {isListening ? 'Listening...' : '🎤'}
-      </VoiceButton>
-      <SendButton onClick={onSend}>Send</SendButton>
+      {uploadedFile && (
+        <FilePreview>
+          <FileIcon>📄</FileIcon>
+          <FileName>{uploadedFile.name}</FileName>
+          <RemoveButton onClick={handleFileRemove}>×</RemoveButton>
+        </FilePreview>
+      )}
+      <InputWrapper>
+        <InputField
+          type="text"
+          value={value}
+          onChange={onChange}
+          placeholder="输入消息..."
+        />
+        <ButtonGroup>
+          <label htmlFor="file-upload">
+            <UploadButton>📎</UploadButton>
+          </label>
+          <input
+            id="file-upload"
+            type="file"
+            style={{ display: 'none' }}
+            onChange={handleFileUpload}
+          />
+          <VoiceButton onClick={handleVoiceInput}>
+            {isListening ? '🎙️' : '🎤'}
+          </VoiceButton>
+          <SendButton onClick={onSend}>↑</SendButton>
+        </ButtonGroup>
+      </InputWrapper>
+      {isPreviewVisible && (
+        <PreviewContainer>
+          <PreviewText>{previewText}</PreviewText>
+          <PreviewButtonGroup>
+            <ConfirmButton onClick={handleConfirm}>确定</ConfirmButton>
+            <CancelButton onClick={handleCancel}>取消</CancelButton>
+          </PreviewButtonGroup>
+        </PreviewContainer>
+      )}
     </InputContainer>
   );
 };
-
 export default InputBox;

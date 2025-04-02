@@ -1,6 +1,5 @@
-import React, {useState} from 'react';
+ import React, {useState} from 'react';
 import Sidebar from './Components/Sidebar/Sidebar';
-import TeamBuilder from './Pages/TeamBuilder';
 import Session from './Pages/Session';
 import Gallery from './Pages/Gallery';
 import './App.css';
@@ -16,8 +15,6 @@ const App = () => {
 
     const renderPage = () => {
         switch (activePage) {
-            case 'TeamBuilder':
-                return <TeamBuilder/>;
             case 'Session':
                 return <Session/>;
             case 'Gallery':

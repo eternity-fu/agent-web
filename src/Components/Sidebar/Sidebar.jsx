@@ -17,22 +17,15 @@ const Sidebar = ({activePage, onItemClick}) => {
         {isExpanded ? '<<' : '>>'}
       </button>
       <SidebarItem
-        icon="TeamBuilder"
-        text="TeamBuilder"
-        isActive={activePage === 'TeamBuilder'}
-        onClick={() => onItemClick('TeamBuilder')}
-        isExpanded={isExpanded}
-      />
-      <SidebarItem
         icon="Session"
-        text="Session"
+        text="数据分析小助手"
         isActive={activePage === 'Session'}
         onClick={() => onItemClick('Session')}
         isExpanded={isExpanded}
       />
       <SidebarItem
         icon="Gallery"
-        text="Gallery"
+        text="管理"
         isActive={activePage === 'Gallery'}
         onClick={() => onItemClick('Gallery')}
         isExpanded={isExpanded}

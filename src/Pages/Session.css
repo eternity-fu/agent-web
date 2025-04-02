@@ -5,6 +5,7 @@
   margin-top: -20px;
   margin-left: -10px;
   position: relative;
+  overflow: hidden; /* 防止外层滚动 */
 }
 
 .session-sidebar {
@@ -14,6 +15,7 @@
   transition: width 0.3s;
   height: 100vh;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* 右侧阴影 */
+  z-index: 1;
 }
 
 .session-sidebar.collapsed {
@@ -73,7 +75,7 @@
   flex: 1; /* 占据剩余空间*/
   overflow: auto;
   margin-top: 30px; /* 与上面的按钮保持一点间距*/
-  max-height: calc(100vh - 250px); /*设置最大高度，确保内容可以滚动*/
+  max-height: calc(100vh - 150px); /*设置最大高度，确保内容可以滚动*/
 }
 
 .con-list-container ul{
@@ -110,4 +112,22 @@
   height: 100%;
   font-size: 30px;
   color: #888;
+}
+
+/*对话框头部信息展示*/
+.con-head{
+  padding: 16px;
+  border-bottom: 1px solid #ddd;
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.con-head h2{
+  margin: 0;
+}
+.con-head p{
+  margin: 0;
+  color: #666;
+  font-size: 14px;
 }

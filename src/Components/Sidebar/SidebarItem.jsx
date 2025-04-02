@@ -1,15 +1,13 @@
 import React from 'react';
 import './Sidebar.css';
-import { CommentOutlined, RobotOutlined, ProductOutlined } from '@ant-design/icons'; // 引入图标
+import { CommentOutlined, ProductOutlined, RobotOutlined } from '@ant-design/icons'; // 引入图标
 
 const SidebarItem = ({ icon, text, isActive, onClick, isExpanded }) => {
   // 根据传入的 icon 类型渲染对应的图标
   const renderIcon = () => {
     switch (icon) {
-      case 'TeamBuilder':
-        return <RobotOutlined />;
       case 'Session':
-        return <CommentOutlined />;
+        return <RobotOutlined />;
       case 'Gallery':
         return <ProductOutlined />;
       default:
