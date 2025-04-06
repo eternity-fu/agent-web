@@ -228,6 +228,11 @@ const InputBox = ({ value, onChange, onSend }) => {
         <InputField
           type="text"
           value={value}
+          onKeyDown={(e)=>{
+            if(e.key === 'Enter'){
+              onSend();
+            }
+          }}
           onChange={onChange}
           placeholder="输入消息..."
         />
