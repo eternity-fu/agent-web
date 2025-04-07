@@ -173,7 +173,7 @@ const typeMessage = (chunk, callback) => {
     let currentText = newText;
     setCurrentConversation((prev) => {
       const updated = [...prev];
-      updated[updated.length - 1] = { text: currentText, isUser: false };
+      updated[updated.length - 1] = { text: currentText, isUser: false , type: chunkType };
       return updated;
     });
   } else {
@@ -182,7 +182,7 @@ const typeMessage = (chunk, callback) => {
       if (updated.length > 0 && updated[updated.length - 1].text === '') {
         updated = updated.slice(0, -1);
       }
-      return [...updated, { text: newText, isUser: false }];
+      return [...updated, { text: newText, isUser: false , type: chunkType}];
     });
     lastChunkType = chunkType;
   }
@@ -197,7 +197,7 @@ const typeMessage = (chunk, callback) => {
       return;
     }
 
-    const userMessage = { text: inputValue, isUser: true };
+    const userMessage = { text: inputValue, isUser: true ,type:null};
     const updatedCurrentConversation = [...currentConversation, userMessage];
     setCurrentConversation(updatedCurrentConversation);
     setInputValue('');
@@ -297,7 +297,7 @@ const typeMessage = (chunk, callback) => {
         <MainContent>
           <MessagesContainer ref={messagesContainerRef}>
             {currentConversation.map((msg, index) => (
-              <Message key={index} text={msg.text} isUser={msg.isUser} />
+              <Message key={index} text={msg.text} isUser={msg.isUser} type={msg.type} />
             ))}
             {isLoading && <LoadingMessage><Spin size="midle" />正在加载...</LoadingMessage>}
           </MessagesContainer>

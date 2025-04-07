@@ -4,6 +4,7 @@ import Markdown from 'react-markdown';
 import { Collapse, message } from 'antd';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { UserOutlined, RobotOutlined, UpOutlined, DownOutlined } from '@ant-design/icons';
 
 const MessageContainer = styled.div`
   background: ${({ isUser }) => (isUser ? '#007bff' : '#f1f1f1')};
@@ -13,6 +14,63 @@ const MessageContainer = styled.div`
   margin: 5px 0;
   max-width: 70%;
   align-self: ${({ isUser }) => (isUser ? 'flex-end' : 'flex-start')};
+`;
+
+const MessageHeader = styled.div`
+  display: flex;
+  margin-bottom: 8px;
+  justify-content: ${(props) => (props.isUser ? 'flex-end' : 'flex-start')};
+`;
+
+const AIHeader = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const UserHeader = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const UserIcon = styled(UserOutlined)`
+  font-size: 20px;
+  margin-right: 8px;
+`;
+
+const AIIcon = styled(RobotOutlined)`
+  font-size: 20px;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+`;
+
+const MessageType = styled.span`
+  font-size: 16px;
+  color: black;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+`;
+
+const ToggleButton = styled.button`
+  font-size: 12px;
+  color: #666;
+  background: #e0e0e0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background: #d0d0d0;
+  }
 `;
 
 const SearchResultContainer = styled.div`
@@ -99,16 +157,16 @@ const CodeBlockContent = styled.div`
 
 const ImageContainer = styled.div`
   margin: 10px 0;
-  background: #d3d3d3; // 与代码块容器背景一致
-  border-radius: 8px; // 圆角矩形
-  padding: 8px; // 内边距
-  display: inline-block; // 适应图片大小
+  background: #d3d3d3;
+  border-radius: 8px;
+  padding: 8px;
+  display: inline-block;
 `;
 
 const StyledImage = styled.img`
-  max-width: 100%; // 确保图片不会超出容器
-  border-radius: 4px; // 图片本身也有圆角
-  display: block; // 避免图片下方的空白
+  max-width: 100%;
+  border-radius: 4px;
+  display: block;
 `;
 
 const ImageError = styled.div`
@@ -116,7 +174,9 @@ const ImageError = styled.div`
   font-size: 0.9em;
 `;
 
-const Message = ({ text, isUser }) => {
+const Message = ({ text, isUser, type }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false); // 添加折叠状态
+
   // 尝试解析 text 是否为 JSON 格式（搜索结果）
   let parsedData = null;
   try {
@@ -128,33 +188,59 @@ const Message = ({ text, isUser }) => {
   // 如果是搜索结果（数组且包含 title, url, content, score）
   if (Array.isArray(parsedData) && parsedData[0]?.title && parsedData[0]?.url && parsedData[0]?.content) {
     return (
-      <SearchResultContainer>
-        {parsedData.map((result, index) => (
-          <Collapse
-            key={index}
-            defaultActiveKey={['0']}
-            items={[
-              {
-                key: index.toString(),
-                label: (
-                  <SearchResultHeader>
-                    <SearchResultTitle>{result.title}</SearchResultTitle>
-                    <SearchResultScore>score: {result.score}</SearchResultScore>
-                  </SearchResultHeader>
-                ),
-                children: (
-                  <>
-                    <SearchResultUrl>{result.url}</SearchResultUrl>
-                    <SearchResultContent>
-                      <Markdown>{result.content}</Markdown>
-                    </SearchResultContent>
-                  </>
-                ),
-              },
-            ]}
-          />
-        ))}
-      </SearchResultContainer>
+      <MessageContainer isUser={isUser}>
+        <MessageHeader isUser={isUser}>
+          {/* AI消息：图标、type和折叠按钮在左上角 */}
+          {!isUser && (
+            <AIHeader>
+              <AIIcon />
+              {type && <MessageType>{type}</MessageType>}
+              <ToggleButton onClick={() => setIsCollapsed(!isCollapsed)}>
+                {isCollapsed ? <UpOutlined /> : <DownOutlined />}
+              </ToggleButton>
+            </AIHeader>
+          )}
+          {/*/!* 用户消息：图标和折叠按钮在右上角 *!/*/}
+          {/*{isUser && (*/}
+          {/*  <UserHeader>*/}
+          {/*    <UserIcon />*/}
+          {/*    <ToggleButton onClick={() => setIsCollapsed(!isCollapsed)}>*/}
+          {/*      {isCollapsed ? <UpOutlined /> : <DownOutlined />}*/}
+          {/*    </ToggleButton>*/}
+          {/*  </UserHeader>*/}
+          {/*)}*/}
+        </MessageHeader>
+        {/* 根据折叠状态显示或隐藏搜索结果 */}
+        {!isCollapsed && (
+          <SearchResultContainer>
+            {parsedData.map((result, index) => (
+              <Collapse
+                key={index}
+                defaultActiveKey={['0']}
+                items={[
+                  {
+                    key: index.toString(),
+                    label: (
+                      <SearchResultHeader>
+                        <SearchResultTitle>{result.title}</SearchResultTitle>
+                        <SearchResultScore>score: {result.score}</SearchResultScore>
+                      </SearchResultHeader>
+                    ),
+                    children: (
+                      <>
+                        <SearchResultUrl>{result.url}</SearchResultUrl>
+                        <SearchResultContent>
+                          <Markdown>{result.content}</Markdown>
+                        </SearchResultContent>
+                      </>
+                    ),
+                  },
+                ]}
+              />
+            ))}
+          </SearchResultContainer>
+        )}
+      </MessageContainer>
     );
   }
 
@@ -180,59 +266,81 @@ const Message = ({ text, isUser }) => {
   // 普通消息，使用 Markdown 渲染，并自定义代码块和图片
   return (
     <MessageContainer isUser={isUser}>
-      <Markdown
-        components={{
-          // 自定义代码块渲染
-          code({ node, inline, className, children, ...props }) {
-            const match = /language-(\w+)/.exec(className || '');
-            const language = match ? match[1] : 'text';
+      <MessageHeader isUser={isUser}>
+        {/* AI消息：图标、type和折叠按钮在左上角 */}
+        {!isUser && (
+          <AIHeader>
+            <AIIcon />
+            {type && <MessageType>{type}</MessageType>}
+            <ToggleButton onClick={() => setIsCollapsed(!isCollapsed)}>
+              {isCollapsed ? <UpOutlined /> : <DownOutlined />}
+            </ToggleButton>
+          </AIHeader>
+        )}
+        {/* 用户消息：图标和折叠按钮在右上角 */}
+        {isUser && (
+          <UserHeader>
+            <UserIcon />
+            <ToggleButton onClick={() => setIsCollapsed(!isCollapsed)}>
+              {isCollapsed ? <UpOutlined /> : <DownOutlined />}
+            </ToggleButton>
+          </UserHeader>
+        )}
+      </MessageHeader>
+      {/* 根据折叠状态显示或隐藏消息内容 */}
+      {!isCollapsed && (
+        <Markdown
+          components={{
+            code({ node, inline, className, children, ...props }) {
+              const match = /language-(\w+)/.exec(className || '');
+              const language = match ? match[1] : 'text';
 
-            if (inline) {
-              return <code className={className} {...props}>{children}</code>;
-            }
+              if (inline) {
+                return <code className={className} {...props}>{children}</code>;
+              }
 
-            const handleCopy = () => {
-              navigator.clipboard.writeText(String(children)).then(() => {
-                message.success('代码已复制到剪贴板！');
-              }).catch(() => {
-                message.error('复制失败，请手动复制！');
-              });
-            };
+              const handleCopy = () => {
+                navigator.clipboard.writeText(String(children)).then(() => {
+                  message.success('代码已复制到剪贴板！');
+                }).catch(() => {
+                  message.error('复制失败，请手动复制！');
+                });
+              };
 
-            return (
-              <CodeBlockContainer>
-                <CodeBlockHeader>
-                  <CodeBlockLanguage>{language}</CodeBlockLanguage>
-                  <CopyButton onClick={handleCopy}>复制</CopyButton>
-                </CodeBlockHeader>
-                <CodeBlockContent>
-                  <SyntaxHighlighter
-                    style={vscDarkPlus}
-                    language={language}
-                    PreTag="div"
-                    customStyle={{
-                      margin: 0,
-                      padding: '10px',
-                      background: '#1e1e1e',
-                      borderBottomLeftRadius: '8px',
-                      borderBottomRightRadius: '8px',
-                    }}
-                    {...props}
-                  >
-                    {String(children).replace(/\n$/, '')}
-                  </SyntaxHighlighter>
-                </CodeBlockContent>
-              </CodeBlockContainer>
-            );
-          },
-          // 自定义图片渲染
-          img({ node, ...props }) {
-            return <ImageWithErrorHandling {...props} />;
-          },
-        }}
-      >
-        {text}
-      </Markdown>
+              return (
+                <CodeBlockContainer>
+                  <CodeBlockHeader>
+                    <CodeBlockLanguage>{language}</CodeBlockLanguage>
+                    <CopyButton onClick={handleCopy}>复制</CopyButton>
+                  </CodeBlockHeader>
+                  <CodeBlockContent>
+                    <SyntaxHighlighter
+                      style={vscDarkPlus}
+                      language={language}
+                      PreTag="div"
+                      customStyle={{
+                        margin: 0,
+                        padding: '10px',
+                        background: '#1e1e1e',
+                        borderBottomLeftRadius: '8px',
+                        borderBottomRightRadius: '8px',
+                      }}
+                      {...props}
+                    >
+                      {String(children).replace(/\n$/, '')}
+                    </SyntaxHighlighter>
+                  </CodeBlockContent>
+                </CodeBlockContainer>
+              );
+            },
+            img({ node, ...props }) {
+              return <ImageWithErrorHandling {...props} />;
+            },
+          }}
+        >
+          {text}
+        </Markdown>
+      )}
     </MessageContainer>
   );
 };
