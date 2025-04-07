@@ -151,11 +151,11 @@ const CancelButton = styled.button`
 `;
 
 // 输入框组件
-const InputBox = ({ value, onChange, onSend }) => {
+const InputBox = ({ value, onChange, onSend, uploadedFile, setUploadedFile}) => {
   const [isListening, setIsListening] = useState(false);
   const [previewText, setPreviewText] = useState('');
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState(null);
+
 
   const handleVoiceInput = () => {
     if (!('webkitSpeechRecognition' in window)) {

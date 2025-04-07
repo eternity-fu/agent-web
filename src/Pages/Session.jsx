@@ -41,6 +41,7 @@ const Session = () => {
   const [currentConversation, setCurrentConversation] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const messagesContainerRef = useRef(null); // 直接绑定到 MessagesContainer
+  const [uploadedFile, setUploadedFile] = useState(null);
 
   // 从 localStorage 加载对话历史
   useEffect(() => {
@@ -192,15 +193,32 @@ const typeMessage = (chunk, callback) => {
 
 // 发送消息
   const handleSend = async () => {
-    if (inputValue.trim() === '') {
-      message.warning('消息不能为空');
-      return;
-    }
+    let textContent = inputValue.trim(); // 输入框内容
+  let filePath = uploadedFile ? `/uploads/${uploadedFile.name}` : null; // 文件路径
 
-    const userMessage = { text: inputValue, isUser: true ,type:null};
-    const updatedCurrentConversation = [...currentConversation, userMessage];
-    setCurrentConversation(updatedCurrentConversation);
-    setInputValue('');
+  // 如果没有文件且输入框为空，提示错误
+  if (!filePath && !textContent) {
+    message.warning('消息不能为空');
+    return;
+  }
+
+  // 构造 userMessage，包含 text 和 file 属性
+  const userMessage = {
+    text: textContent || '', // 如果没有输入内容，设为空字符串
+    file: filePath,          // 文件路径，如果没有文件则为 null
+    isUser: true,
+  };
+  const updatedCurrentConversation = [...currentConversation, userMessage];
+  setCurrentConversation(updatedCurrentConversation);
+  setInputValue(''); // 清空输入框
+  if (uploadedFile) setUploadedFile(null); // 清空文件
+
+  // 发送给后端的消息内容（根据后端需求调整）
+  const messageContent = filePath
+    ? textContent
+      ? `${filePath} ${textContent}` // 文件路径和文本拼接
+      : filePath                    // 只有文件路径
+    : textContent;                  // 只有文本
 
 
     try {
@@ -211,7 +229,7 @@ const typeMessage = (chunk, callback) => {
         'agent',
         {
           input: {
-            messages: [{ role: 'user', content: inputValue.trim() }],
+            messages: [{ role: 'user', content: messageContent }],
           },
           streamMode: 'messages',
         }
@@ -297,7 +315,7 @@ const typeMessage = (chunk, callback) => {
         <MainContent>
           <MessagesContainer ref={messagesContainerRef}>
             {currentConversation.map((msg, index) => (
-              <Message key={index} text={msg.text} isUser={msg.isUser} type={msg.type} />
+              <Message key={index} text={msg.text} isUser={msg.isUser} type={msg.type} file={msg.file}/>
             ))}
             {isLoading && <LoadingMessage><Spin size="midle" />正在加载...</LoadingMessage>}
           </MessagesContainer>
@@ -305,6 +323,8 @@ const typeMessage = (chunk, callback) => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onSend={handleSend}
+            uploadedFile={uploadedFile} // 传递文件状态
+            setUploadedFile={setUploadedFile} // 传递设置函数
           />
         </MainContent>
       )}
